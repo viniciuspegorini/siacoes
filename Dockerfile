@@ -17,9 +17,7 @@ COPY frontend ./frontend
 COPY src ./src
 COPY docker/dblocal.dev.properties ./src/main/resources/dblocal.properties
 
-RUN if [ "$BUILD_MODE" = "dev" ]; then \
-      cp docker/web-dev.xml src/main/webapp/WEB-INF/web.xml; \
-    fi \
+RUN cp docker/web-dev.xml src/main/webapp/WEB-INF/web.xml \
     && mvn clean package -Pproduction -DskipTests -B
 
 FROM tomcat:9.0-jdk8-temurin

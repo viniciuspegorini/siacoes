@@ -8,7 +8,7 @@ pipeline {
         APP_CONTAINER_PORT=8080
         
         POSTGRESQL_CRED = credentials('postgres-id')
-        DB_SERVER="jdbc:postgresql://postgresql:5432/siacoes"
+        DB_SERVER="postgresql:5432"
         DB_USERNAME="${POSTGRESQL_CRED_USR}"
         DB_PASSWORD="${POSTGRESQL_CRED_PSW}"
         
