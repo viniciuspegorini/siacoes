@@ -16,11 +16,13 @@ services:
       DB_DRIVER_CLASS: ${DB_DRIVER_CLASS:-org.postgresql.Driver}
       DB_TYPE: ${DB_TYPE:-postgresql}
     labels:
-        # Traefik Config
+      # Traefik Config
       - "traefik.enable=true"
       - "traefik.http.routers.siacoes.rule=Host(`${API_HOST_URL}`)"
       - "traefik.http.routers.siacoes.tls.certresolver=letsencrypt"
       - "traefik.http.routers.siacoes.entrypoints=websecure"
+      - "traefik.http.routers.siacoes.service=siacoes"
+      - "traefik.http.services.siacoes.loadbalancer.server.port=8080"
     restart: unless-stopped
     networks:
       - web
