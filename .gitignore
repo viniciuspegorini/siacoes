@@ -1,5 +1,10 @@
 *.class
 *.properties
+!dblocal.properties.example
+!docker/dblocal.properties
+!docker/dblocal.dev.properties
+
+.env
 *.key
 *.jasper
 

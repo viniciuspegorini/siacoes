@@ -1,6 +1,5 @@
 package br.edu.utfpr.dv.siacoes.dao;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,10 +11,10 @@ import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 public class ConnectionDAO {
 	
-	private String SERVER = "192.168.56.20";
-	private String DATABASE = "diget";
-	private String USER = "mysql";
-	private String PASSWORD = "mysql";
+	private String SERVER = "localhost:5432";
+	private String DATABASE = "siacoes";
+	private String USER = "postgres";
+	private String PASSWORD = "postgres";
 	
 	private DataSource datasource = null;
 	private static ConnectionDAO instance = null;
@@ -36,28 +35,21 @@ public class ConnectionDAO {
 	}
 	
 	private void createDataSource() throws SQLException{
-		String user, password, server, database, driver, type; 
-		
+		Properties props = new Properties();
+
 		try{
-			Properties props = new Properties();
 			InputStream fis = this.getClass().getClassLoader().getResourceAsStream("/dblocal.properties");
-	        
-	        props.load(fis);
-	        
-	        server = props.getProperty("DB_SERVER");
-	        database = props.getProperty("DB_NAME");
-	        user = props.getProperty("DB_USERNAME");
-	        password = props.getProperty("DB_PASSWORD");
-	        driver = props.getProperty("DB_DRIVER_CLASS");
-	        type = props.getProperty("DB_TYPE");
-	     }catch(Exception e){
-	    	server = SERVER;
-	    	database = DATABASE;
-	    	user = USER;
-	    	password = PASSWORD;
-	    	driver = "com.mysql.jdbc.Driver";
-	    	type = "mysql";
+			props.load(fis);
+		}catch(Exception e){
+			// usa valores padrão definidos nos campos da classe
 		}
+
+		String server = getConfig(props, "DB_SERVER", SERVER);
+		String database = getConfig(props, "DB_NAME", DATABASE);
+		String user = getConfig(props, "DB_USERNAME", USER);
+		String password = getConfig(props, "DB_PASSWORD", PASSWORD);
+		String driver = getConfig(props, "DB_DRIVER_CLASS", "org.postgresql.Driver");
+		String type = getConfig(props, "DB_TYPE", "postgresql");
 		
 		PoolProperties p = new PoolProperties();
 		p.setUrl("jdbc:" + type + "://" + server + "/" + database);
@@ -88,6 +80,20 @@ public class ConnectionDAO {
 			Statement stmt = this.datasource.getConnection().createStatement();
 			stmt.execute("SET GLOBAL max_allowed_packet=1024*1024*14;");	
 		}
+	}
+
+	private String getConfig(Properties props, String key, String defaultValue) {
+		String envValue = System.getenv(key);
+		if (envValue != null && !envValue.trim().isEmpty()) {
+			return envValue.trim();
+		}
+
+		String propValue = props.getProperty(key);
+		if (propValue != null && !propValue.trim().isEmpty()) {
+			return propValue.trim();
+		}
+
+		return defaultValue;
 	}
 	
 }

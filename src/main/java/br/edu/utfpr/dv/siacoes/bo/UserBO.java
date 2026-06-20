@@ -473,7 +473,7 @@ public class UserBO {
 			if(!user.getPassword().equals(hash)){
 				throw new Exception("Usuário ou senha inválidos.");
 			}
-		}else{
+		}else{			
 			LdapUtils ldapUtils = new LdapUtils(LdapConfig.getInstance().getHost(), 
 					LdapConfig.getInstance().getPort(), LdapConfig.getInstance().isUseSSL(), 
 					LdapConfig.getInstance().isIgnoreCertificates(), LdapConfig.getInstance().getBasedn(), 
@@ -519,8 +519,8 @@ public class UserBO {
 				
 				this.save(user.getIdUser(), user);
 			}catch(Exception e){
-				Logger.getGlobal().log(Level.SEVERE, e.getMessage(), e);
-				
+				Logger.getGlobal().log(Level.SEVERE, "Autenticando no servidor LDAP: " + LdapConfig.getInstance().getHost() + ":" + LdapConfig.getInstance().getPort() + " - " + login + " \n---- " + e.getMessage(), e);
+				System.out.println("Autenticando no servidor LDAP: " + LdapConfig.getInstance().getHost() + ":" + LdapConfig.getInstance().getPort() + " - " + login + " \n---- ");
 				throw new Exception("Usuário ou senha inválidos." + System.lineSeparator() + "Detalhes: " + e.getMessage());
 			}
 		}

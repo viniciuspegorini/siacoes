@@ -1,0 +1,40 @@
+services:
+  siacoes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_MODE: ${BUILD_MODE:-dev}
+    container_name: siacoes
+    ports:
+      - "8888:8080"
+    environment:
+      DB_SERVER: ${DB_SERVER:-localhost:5432}
+      DB_NAME: ${DB_NAME:-siacoes}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_DRIVER_CLASS: ${DB_DRIVER_CLASS:-org.postgresql.Driver}
+      DB_TYPE: ${DB_TYPE:-postgresql}
+    labels:
+        # Traefik Config
+      - "traefik.enable=true"
+      - "traefik.http.routers.siacoes.rule=Host(`${API_HOST_URL}`)"
+      - "traefik.http.routers.siacoes.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.siacoes.entrypoints=websecure"
+    restart: unless-stopped
+    networks:
+      - web
+      - database
+
+########################### NETWORKS
+networks:
+  web:
+    name: web
+    driver: bridge
+    external: true
+    attachable: true
+  database:
+    name: database
+    driver: bridge
+    external: true
+    attachable: true

@@ -77,6 +77,16 @@ CREATE TABLE department (
 );
 CREATE INDEX fk_department_campus_idx ON department (idcampus);
 
+CREATE TABLE thesisformat (
+  idthesisformat SERIAL NOT NULL,
+  idDepartment INT NOT NULL,
+  description VARCHAR(255) NOT NULL,
+  active SMALLINT NOT NULL,
+  PRIMARY KEY (idthesisformat),
+  CONSTRAINT fk_thesisformat_department FOREIGN KEY (idDepartment) REFERENCES department (iddepartment) ON DELETE NO ACTION ON UPDATE NO ACTION
+);
+CREATE INDEX fk_thesisformat_department_idx ON thesisformat (idDepartment);
+
 CREATE TABLE reminderconfig (
   idreminderconfig SERIAL NOT NULL,
   iddepartment INT NOT NULL,
@@ -717,15 +727,7 @@ CREATE TABLE finaldocument (
 CREATE INDEX fk_finaldocument_idproject_idx ON finaldocument (idProject);
 CREATE INDEX fk_finaldocument_idthesis_idx ON finaldocument (idThesis);
 
-CREATE TABLE thesisformat (
-  idthesisformat SERIAL NOT NULL,
-  idDepartment INT NOT NULL,
-  description VARCHAR(255) NOT NULL,
-  active SMALLINT NOT NULL,
-  PRIMARY KEY (idthesisformat),
-  CONSTRAINT fk_thesisformat_department FOREIGN KEY (idDepartment) REFERENCES department (iddepartment) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-CREATE INDEX fk_thesisformat_department_idx ON thesisformat (idDepartment);
+
 
 CREATE TABLE evaluationitem (
   idevaluationItem SERIAL NOT NULL,
@@ -880,7 +882,7 @@ CREATE TABLE eventlog (
     idobject integer NOT NULL,
     date timestamp NOT NULL,
     data bytea NOT NULL,
-    PRIMARY KEY (ideventlog),
+    PRIMARY KEY (idlog),
     CONSTRAINT fk_eventlog_user FOREIGN KEY (iduser) REFERENCES "user" (iduser) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 CREATE INDEX fk_eventlog_user_idx ON eventlog (iduser);
@@ -1071,3 +1073,5 @@ INSERT INTO emailmessage(idemailmessage, module, subject, message, datafields) V
 
 INSERT INTO remindermessage(idremindermessage, module, subject, message, datafields) VALUES(1, 3, '', '', '{student};{company};{supervisor}');
 INSERT INTO remindermessage(idremindermessage, module, subject, message, datafields) VALUES(2, 3, '', '', '{student};{company}');
+
+INSERT INTO ldapconfig (host, port, useSSL, ignoreCertificates, basedn, uidField, cpfField, registerField, nameField, emailField) VALUES ('ldap.utfpr.edu.br', 389, 0, 0, 'dc=utfpr,dc=edu,dc=br', 'uid', 'cpf', 'register', 'cn', 'mail');

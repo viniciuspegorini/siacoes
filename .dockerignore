@@ -1,0 +1,11 @@
+target/
+node_modules/
+.git/
+.gitignore
+*.class
+*.war
+*.jar
+.settings/
+.classpath
+.project
+hs_err_pid*
